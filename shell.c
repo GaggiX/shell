@@ -41,6 +41,15 @@ char **parse_line(char *line) {
 
   token = strtok(line, DELIM);
   while (token != NULL) {
+    if (token[0] == '$' && position != 0) {
+      //remove $ from the token and get the environment variable
+      char *env = getenv(memmove(&token[0], &token[1], strlen(token)));
+      //if env is NULL, there is no environment variable
+      if (env == NULL) {
+        env = '\0';
+      }
+      token = env;
+    }
     args[position] = token;
     position++;
 
@@ -71,7 +80,7 @@ char *read_line(void) {
   }
 
   //if user is root print #, otherwise it print $
-  fputs(getuid() == 0 ? "# " : "$ ", stdout);
+  fputs(geteuid() == 0 ? "# " : "$ ", stdout);
 
   while (1) {
 

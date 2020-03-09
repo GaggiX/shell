@@ -1,17 +1,12 @@
 # Shell
-
-A simple Unix shell written in C.
+A simple shell written in C.
 
 ## Build
-
     $ git clone https://github.com/GaggiX/shell.git
-    $ cd shell
     $ make
 
 ## Install
-
-    # make install
-
+    # make install    
 You can test the shell using:
 
 	$ gsh
@@ -19,3 +14,8 @@ If you are brave enough you can change your shell with this:
 
     # echo "/bin/gsh" >> /etc/shells
     $ chsh -s "/bin/gsh"
+## Features
+
+ - Basic builtin Commands: `cd`, `exit` and `help`
+ - Effective uid
+ - Basic parameter expansion
