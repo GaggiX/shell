@@ -7,7 +7,8 @@
 
 int exec_command(char **args){
   if (strcmp(args[0], "cd") == 0) {
-    int chdir_return = chdir(args[1]);
+    //if there is no argument, cd returns to $HOME
+    int chdir_return = chdir(args[1] == NULL ? getenv("HOME") : args[1]);
     if (chdir_return) {
       perror(args[0]);
     }
