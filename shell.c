@@ -14,7 +14,7 @@ int exec_command(char **args){
   } else if (strcmp(args[0], "exit") == 0) {
     return 1;
   } else if (strcmp(args[0], "help") == 0){
-    puts("GAGGI's shell\nShell: > [command] [args...]");
+    puts("GAGGI's shell\nShell: $ [command] [args...]");
   } else {
     pid_t fork_return = fork();
     if (fork_return == 0) {
