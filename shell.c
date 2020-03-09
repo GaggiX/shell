@@ -70,7 +70,8 @@ char *read_line(void) {
     exit(1);
   }
 
-  printf("> ");
+  //if user is root print #, otherwise it print $
+  fputs(getuid() == 0 ? "# " : "$ ", stdout);
 
   while (1) {
 

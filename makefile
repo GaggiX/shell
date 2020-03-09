@@ -6,9 +6,10 @@
 .PHONY = clean install
 
 CC = gcc
+CFLAGS  = -Wall
 
 shell: shell.c
-	$(CC) shell.c -o shell
+	$(CC) $(CFLAGS) -o shell shell.c
 
 clean:
 	rm shell
