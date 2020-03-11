@@ -36,7 +36,12 @@ int exec_command(char **args){
     fprintf(stderr, "gsh: %s command not found\n", args[0]);
     exit(127);
   } else if (fork_return > 0) {
-    wait(NULL);
+    int wstatus;
+    char stat[3];
+    wait(&wstatus);
+    //set $? to the exit status of the child
+    sprintf(stat, "%d", WEXITSTATUS(wstatus));
+    setenv("?", stat , 1);
     return 0;
   } else {
     perror("gsh: fork error");
