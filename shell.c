@@ -12,26 +12,22 @@ int help_command(char **args);
 int set_command(char **args);
 int unset_command(char **args);
 
-char *builtin_str[] = {
-  "cd",
-  "exit",
-  "help",
-  "set",
-  "unset"
-};
-
-int (*builtin[]) (char **) = {
-  &cd_command,
-  &exit_command,
-  &help_command,
-  &set_command,
-  &unset_command
+struct cmd {
+   char *name;
+   int (*builtin) (char **);
+} builtins[] = {
+  {"cd", &cd_command},
+  {"exit", &exit_command},
+  {"help", &help_command},
+  {"set", &set_command},
+  {"unset", &unset_command}
 };
 
 int exec_command(char **args){
-  for (size_t i = 0; i < (sizeof(builtin_str) / sizeof(char *)); i++) {
-    if (strcmp(args[0], builtin_str[i]) == 0) {
-      return (builtin[i]) (args);
+  //check if args[0] is a built-in command
+  for (size_t i = 0; i < ((sizeof(builtins) / sizeof(char *)) / 2); i++) {
+    if (strcmp(args[0], builtins[i].name) == 0) {
+      return builtins[i].builtin(args);
     }
   }
   pid_t fork_return = fork();
