@@ -150,7 +150,7 @@ int cd_command(char **args) {
   if (getcwd(cwd, sizeof(cwd)) != NULL) {
     int setenv_return = setenv("PWD", cwd, 1);
     if (setenv_return) {
-      perror(args[0]);
+      perror("setenv()");
     }
   } else {
     perror("getcwd()");
