@@ -5,31 +5,40 @@
 #include <stdlib.h>
 #include <string.h>
 
+int cd_command(char **args);
+int exit_command(char **args);
+int help_command(char **args);
+
+char *builtin_str[] = {
+  "cd",
+  "exit",
+  "help"
+};
+
+int (*builtin[]) (char **) = {
+  &cd_command,
+  &exit_command,
+  &help_command
+};
+
 int exec_command(char **args){
-  if (strcmp(args[0], "cd") == 0) {
-    //if there is no argument, cd returns to $HOME
-    int chdir_return = chdir(args[1] == NULL ? getenv("HOME") : args[1]);
-    if (chdir_return) {
-      perror(args[0]);
-    }
-  } else if (strcmp(args[0], "exit") == 0) {
-    return 1;
-  } else if (strcmp(args[0], "help") == 0){
-    puts("GAGGI's shell\nShell: $ [command] [args...]");
-  } else {
-    pid_t fork_return = fork();
-    if (fork_return == 0) {
-      execvp(args[0], args);
-      fprintf(stderr, "gsh: %s command not found\n", args[0]);
-      exit(127);
-    } else if (fork_return > 0) {
-      wait(NULL);
-    } else {
-      perror("gsh: fork error");
-      return 1;
+  for (size_t i = 0; i < (sizeof(builtin_str) / sizeof(char *)); i++) {
+    if (strcmp(args[0], builtin_str[i]) == 0) {
+      return (builtin[i]) (args);
     }
   }
-  return 0;
+  pid_t fork_return = fork();
+  if (fork_return == 0) {
+    execvp(args[0], args);
+    fprintf(stderr, "gsh: %s command not found\n", args[0]);
+    exit(127);
+  } else if (fork_return > 0) {
+    wait(NULL);
+    return 0;
+  } else {
+    perror("gsh: fork error");
+    return 1;
+  }
 }
 
 #define DELIM " \t\r\n\a"
@@ -120,5 +129,23 @@ int main(void) {
     free(args);
     free(line);
   }
+  return 0;
+}
+
+int cd_command(char **args) {
+  //if there is no argument, cd returns to $HOME
+  int chdir_return = chdir(args[1] == NULL ? getenv("HOME") : args[1]);
+  if (chdir_return) {
+    perror(args[0]);
+  }
+  return 0;
+}
+
+int exit_command(char **args) {
+  return 1;
+}
+
+int help_command(char **args) {
+  puts("GAGGI's shell\nShell: $ [command] [args...]");
   return 0;
 }
