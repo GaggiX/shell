@@ -8,17 +8,23 @@
 int cd_command(char **args);
 int exit_command(char **args);
 int help_command(char **args);
+int set_command(char **args);
+int unset_command(char **args);
 
 char *builtin_str[] = {
   "cd",
   "exit",
-  "help"
+  "help",
+  "set",
+  "unset"
 };
 
 int (*builtin[]) (char **) = {
   &cd_command,
   &exit_command,
-  &help_command
+  &help_command,
+  &set_command,
+  &unset_command
 };
 
 int exec_command(char **args){
@@ -147,5 +153,30 @@ int exit_command(char **args) {
 
 int help_command(char **args) {
   puts("GAGGI's shell\nShell: $ [command] [args...]");
+  return 0;
+}
+
+int set_command(char **args) {
+  if (args[1] != NULL && args[2] != NULL) {
+    //1 -> overwrite
+    int setenv_return = setenv(args[1], args[2], 1);
+    if (setenv_return) {
+      perror(args[0]);
+    }
+  } else {
+    puts("help: set <name> <value>");
+  }
+  return 0;
+}
+
+int unset_command(char **args) {
+  if (args[1] != NULL) {
+    int unsetenv_return = unsetenv(args[1]);
+    if (unsetenv_return) {
+      perror(args[0]);
+    }
+  } else {
+    puts("help: unset <name>");
+  }
   return 0;
 }
