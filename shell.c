@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 int cd_command(char **args);
 int exit_command(char **args);
@@ -143,6 +144,16 @@ int cd_command(char **args) {
   int chdir_return = chdir(args[1] == NULL ? getenv("HOME") : args[1]);
   if (chdir_return) {
     perror(args[0]);
+  }
+  //set $PWD to the current working directory
+  char cwd[PATH_MAX];
+  if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    int setenv_return = setenv("PWD", cwd, 1);
+    if (setenv_return) {
+      perror(args[0]);
+    }
+  } else {
+    perror("getcwd()");
   }
   return 0;
 }
