@@ -25,7 +25,7 @@ struct cmd {
 
 int exec_command(char **args){
   //check if args[0] is a built-in command
-  for (size_t i = 0; i < ((sizeof(builtins) / sizeof(char *)) / 2); i++) {
+  for (size_t i = 0; i < (sizeof(builtins) / sizeof(struct cmd)); i++) {
     if (strcmp(args[0], builtins[i].name) == 0) {
       return builtins[i].builtin(args);
     }
@@ -97,8 +97,19 @@ char *read_line(void) {
     exit(1);
   }
 
+  char hostn[256];
+  //replace $HOME with ~
+  char cwd[PATH_MAX];
+  char *ptr = strstr(getcwd(cwd, sizeof(cwd)), getenv("HOME"));
+  if (ptr == cwd && (*(ptr + strlen(getenv("HOME"))) == '/' || strlen(getenv("HOME")) == strlen(cwd))) {
+    memmove(&cwd[1], &cwd[strlen(getenv("HOME"))], (sizeof(cwd) - strlen(getenv("HOME"))));
+    cwd[0] = '~';
+  }
+  gethostname(hostn, sizeof(hostn));
+  printf("\033[01;32m%s@%s\033[00m:\033[01;34m%s\033[00m%c ", getenv("LOGNAME"), hostn, cwd, geteuid() == 0 ? '#' : '$');
   //if user is root print #, otherwise it print $
-  fputs(geteuid() == 0 ? "# " : "$ ", stdout);
+  //simpler version
+  //fputs(geteuid() == 0 ? "# " : "$ ", stdout);
 
   while (1) {
 
